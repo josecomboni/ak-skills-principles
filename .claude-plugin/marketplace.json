@@ -1,8 +1,8 @@
 {
-  "name": "karpathy-skills",
-  "id": "karpathy-skills",
+  "name": "ak-skills-principles",
+  "id": "ak-skills-principles",
   "owner": {
-    "name": "forrestchang"
+    "name": "josecomboni"
   },
   "metadata": {
     "description": "Task-driven behavioral guidelines to reduce common LLM coding mistakes, derived from Andrej Karpathy's observations",
@@ -10,12 +10,12 @@
   },
   "plugins": [
     {
-      "name": "andrej-karpathy-skills",
+      "name": "ak-skills-principles",
       "source": "./",
       "description": "Task-driven behavioral guidelines to reduce common LLM coding mistakes: think before acting, keep changes simple and surgical, execute the task contract, and verify it",
       "version": "1.0.0",
       "author": {
-        "name": "forrestchang"
+        "name": "josecomboni"
       },
       "keywords": [
         "guidelines",

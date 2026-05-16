@@ -1,4 +1,4 @@
-# andrej-karpathy-skills — Copilot Instructions
+# ak-skills-principles — Copilot Instructions
 
 ## What this repo is
 
@@ -11,10 +11,10 @@ The guidelines are duplicated or summarized across several files. When a layer c
 | File | Consumer | Notes |
 |------|----------|-------|
 | `CLAUDE.md` | Claude Code (per-project) | Layer-aware root instruction file |
-| `.cursor/rules/karpathy-guidelines.mdc` | Cursor | Layer-aware rule with `alwaysApply: true` frontmatter |
-| `skills/karpathy-guidelines/SKILL.md` | Claude plugin skill | Task-driven skill only; frontmatter has `name`, `description`, `license` |
-| `orchestrators/karpathy-guidelines/ORCHESTRATOR.md` | Orchestrator agents | Goal-driven decomposition and verification |
-| `supervisors/karpathy-guidelines/SUPERVISOR.md` | Supervisor agents | AI-first oversight, HITL override, and lean skill improvement |
+| `.cursor/rules/ak-skills-principles.mdc` | Cursor | Layer-aware rule with `alwaysApply: true` frontmatter |
+| `skills/ak-skills-principles/SKILL.md` | Claude plugin skill | Task-driven skill only; frontmatter has `name`, `description`, `license` |
+| `orchestrators/ak-skills-principles/ORCHESTRATOR.md` | Orchestrator agents | Goal-driven decomposition and verification |
+| `supervisors/ak-skills-principles/SUPERVISOR.md` | Supervisor agents | AI-first oversight, HITL override, and lean skill improvement |
 | `README.md` | GitHub readers | Long-form overview |
 | `EXAMPLES.md` | GitHub readers | Concrete examples |
 
@@ -25,7 +25,7 @@ The guidelines are duplicated or summarized across several files. When a layer c
 ## Plugin metadata
 
 - `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` declare the Claude Code plugin. Bump `version` in both when releasing.
-- The plugin name (`andrej-karpathy-skills`) and marketplace id (`karpathy-skills`) are referenced in `README.md` install commands — keep them aligned.
+- The plugin name and marketplace id (`ak-skills-principles`) are referenced in `README.md` install commands — keep them aligned.
 
 ## Content conventions
 

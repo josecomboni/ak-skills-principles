@@ -1,10 +1,10 @@
 ---
-name: karpathy-guidelines
+name: ak-skills-principles
 description: Task-driven behavioral guidelines for LLM coding skills. Use when executing a bounded coding, review, or refactoring task to avoid overcomplication, make surgical changes, surface assumptions, and verify the task contract.
 license: MIT
 ---
 
-# Karpathy Task Skill Guidelines
+# AK Skills Principles — Task Skill Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
 

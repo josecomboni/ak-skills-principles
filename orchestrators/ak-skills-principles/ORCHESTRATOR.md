@@ -1,4 +1,4 @@
-# Karpathy Orchestrator Guidelines
+# AK Skills Principles — Orchestrator Guidelines
 
 Goal-driven orchestration guidelines for decomposing user goals into bounded skill tasks, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding workflows.
 

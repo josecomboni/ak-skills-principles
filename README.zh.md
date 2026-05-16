@@ -1,4 +1,4 @@
-# 受 Karpathy 启发的分层编码指南
+# AK Skills Principles
 
 > 查看我的新项目 [Multica](https://github.com/multica-ai/multica) —— 一个用于运行和管理编码智能体的开源平台，支持可复用的技能。
 >
@@ -34,11 +34,11 @@
 
 | 路径 | 用途 |
 |------|------|
-| [`skills/karpathy-guidelines/SKILL.md`](skills/karpathy-guidelines/SKILL.md) | 任务驱动的技能指南 |
-| [`orchestrators/karpathy-guidelines/ORCHESTRATOR.md`](orchestrators/karpathy-guidelines/ORCHESTRATOR.md) | 目标驱动的编排指南 |
-| [`supervisors/karpathy-guidelines/SUPERVISOR.md`](supervisors/karpathy-guidelines/SUPERVISOR.md) | 监督和持续改进指南 |
+| [`skills/ak-skills-principles/SKILL.md`](skills/ak-skills-principles/SKILL.md) | 任务驱动的技能指南 |
+| [`orchestrators/ak-skills-principles/ORCHESTRATOR.md`](orchestrators/ak-skills-principles/ORCHESTRATOR.md) | 目标驱动的编排指南 |
+| [`supervisors/ak-skills-principles/SUPERVISOR.md`](supervisors/ak-skills-principles/SUPERVISOR.md) | 监督和持续改进指南 |
 | [`CLAUDE.md`](CLAUDE.md) | 分层根指令文件 |
-| [`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc) | Cursor 项目规则 |
+| [`.cursor/rules/ak-skills-principles.mdc`](.cursor/rules/ak-skills-principles.mdc) | Cursor 项目规则 |
 | [`EXAMPLES.md`](EXAMPLES.md) | 具体示例和反模式 |
 
 ## 技能层：任务驱动执行
@@ -100,13 +100,13 @@
 在 Claude Code 中，首先添加插件市场：
 
 ```text
-/plugin marketplace add josecomboni/andrej-karpathy-skills
+/plugin marketplace add josecomboni/ak-skills-principles
 ```
 
 然后安装插件：
 
 ```text
-/plugin install andrej-karpathy-skills@karpathy-skills
+/plugin install ak-skills-principles@ak-skills-principles
 ```
 
 这会安装本仓库中的任务驱动技能。
@@ -116,19 +116,19 @@
 新项目：
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/ak-skills-principles/main/CLAUDE.md
 ```
 
 已有项目（追加）：
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/josecomboni/ak-skills-principles/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ## 在 Cursor 中使用
 
-本仓库包含一个已提交的 Cursor 项目规则 ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc))，因此在 Cursor 中打开项目时同样适用这些分层指南。详情请参见 **[CURSOR.md](CURSOR.md)**，包括如何在其他项目中使用该规则，以及它与 Claude Code 的关系。
+本仓库包含一个已提交的 Cursor 项目规则 ([`.cursor/rules/ak-skills-principles.mdc`](.cursor/rules/ak-skills-principles.mdc))，因此在 Cursor 中打开项目时同样适用这些分层指南。详情请参见 **[CURSOR.md](CURSOR.md)**，包括如何在其他项目中使用该规则，以及它与 Claude Code 的关系。
 
 ## 如何判断它在起作用
 

@@ -1,4 +1,4 @@
-# Karpathy-Inspired Layered Coding Guidelines
+# AK Skills Principles
 
 > Check out my new project [Multica](https://github.com/multica-ai/multica) — an open-source platform for running and managing coding agents with reusable skills.
 >
@@ -34,11 +34,11 @@ Skills should not behave like autonomous planners. Orchestrators should not bury
 
 | Path | Purpose |
 |------|---------|
-| [`skills/karpathy-guidelines/SKILL.md`](skills/karpathy-guidelines/SKILL.md) | Task-driven skill guidelines |
-| [`orchestrators/karpathy-guidelines/ORCHESTRATOR.md`](orchestrators/karpathy-guidelines/ORCHESTRATOR.md) | Goal-driven orchestration guidelines |
-| [`supervisors/karpathy-guidelines/SUPERVISOR.md`](supervisors/karpathy-guidelines/SUPERVISOR.md) | Oversight and continuous-improvement guidelines |
+| [`skills/ak-skills-principles/SKILL.md`](skills/ak-skills-principles/SKILL.md) | Task-driven skill guidelines |
+| [`orchestrators/ak-skills-principles/ORCHESTRATOR.md`](orchestrators/ak-skills-principles/ORCHESTRATOR.md) | Goal-driven orchestration guidelines |
+| [`supervisors/ak-skills-principles/SUPERVISOR.md`](supervisors/ak-skills-principles/SUPERVISOR.md) | Oversight and continuous-improvement guidelines |
 | [`CLAUDE.md`](CLAUDE.md) | Layer-aware root instruction file |
-| [`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc) | Cursor project rule |
+| [`.cursor/rules/ak-skills-principles.mdc`](.cursor/rules/ak-skills-principles.mdc) | Cursor project rule |
 | [`EXAMPLES.md`](EXAMPLES.md) | Concrete examples and anti-patterns |
 
 ## Skill Layer: Task-Driven Execution
@@ -100,13 +100,13 @@ For humans, the original atrophy warning still applies: occasionally write and r
 From within Claude Code, first add the marketplace:
 
 ```text
-/plugin marketplace add josecomboni/andrej-karpathy-skills
+/plugin marketplace add josecomboni/ak-skills-principles
 ```
 
 Then install the plugin:
 
 ```text
-/plugin install andrej-karpathy-skills@karpathy-skills
+/plugin install ak-skills-principles@ak-skills-principles
 ```
 
 This installs the task-driven skill from this repo.
@@ -116,19 +116,19 @@ This installs the task-driven skill from this repo.
 New project:
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/ak-skills-principles/main/CLAUDE.md
 ```
 
 Existing project (append):
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/josecomboni/ak-skills-principles/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ## Using with Cursor
 
-This repository includes a committed Cursor project rule ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc)) so the same layer-aware guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to Claude Code.
+This repository includes a committed Cursor project rule ([`.cursor/rules/ak-skills-principles.mdc`](.cursor/rules/ak-skills-principles.mdc)) so the same layer-aware guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to Claude Code.
 
 ## How to Know It's Working
 

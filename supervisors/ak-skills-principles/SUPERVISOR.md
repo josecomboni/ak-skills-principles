@@ -1,4 +1,4 @@
-# Karpathy Supervisor Guidelines
+# AK Skills Principles — Supervisor Guidelines
 
 Oversight and continuous-improvement guidelines for supervising agentic coding work, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on watching coding agents closely.
 

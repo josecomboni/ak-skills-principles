@@ -3,7 +3,7 @@ description: Layer-aware behavioral guidelines for task-driven skills, goal-driv
 alwaysApply: true
 ---
 
-# Karpathy layer-aware behavioral guidelines
+# AK Skills Principles layer-aware behavioral guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
