@@ -1,10 +1,10 @@
-# Karpathy-Inspired Claude Code Guidelines
+# Karpathy-Inspired Layered Coding Guidelines
 
 > Check out my new project [Multica](https://github.com/multica-ai/multica) — an open-source platform for running and managing coding agents with reusable skills.
 >
 > Follow me on X: [https://x.com/jiayuan_jy](https://x.com/jiayuan_jy)
 
-A single `CLAUDE.md` file to improve Claude Code behavior, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
+Layer-aware guidelines for AI coding agents, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
 
 English | [简体中文](./README.zh.md)
 
@@ -18,108 +18,109 @@ From Andrej's post:
 
 > "They still sometimes change/remove comments and code they don't sufficiently understand as side effects, even if orthogonal to the task."
 
-## The Solution
+## The Layered Solution
 
-Four principles in one file that directly address these issues:
+The key distinction:
+
+| Layer | Driven by | Actor | Responsibility |
+|-------|-----------|-------|----------------|
+| **Skill** | **Task** | Executor model | Execute one bounded operation with a clear contract |
+| **Orchestrator** | **Goal** | Planning/coordinating model | Decompose goals into tasks, dispatch skills, and verify outcomes |
+| **Supervisor** | **Oversight** | Separate AI/model set by default; HITL only by override | Review plans, diffs, verification evidence, and recurring lessons |
+
+Skills should not behave like autonomous planners. Orchestrators should not bury goal decomposition inside a skill. Supervisors should not be the same unchecked executor grading its own work.
+
+## Repository Layout
+
+| Path | Purpose |
+|------|---------|
+| [`skills/karpathy-guidelines/SKILL.md`](skills/karpathy-guidelines/SKILL.md) | Task-driven skill guidelines |
+| [`orchestrators/karpathy-guidelines/ORCHESTRATOR.md`](orchestrators/karpathy-guidelines/ORCHESTRATOR.md) | Goal-driven orchestration guidelines |
+| [`supervisors/karpathy-guidelines/SUPERVISOR.md`](supervisors/karpathy-guidelines/SUPERVISOR.md) | Oversight and continuous-improvement guidelines |
+| [`CLAUDE.md`](CLAUDE.md) | Layer-aware root instruction file |
+| [`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc) | Cursor project rule |
+| [`EXAMPLES.md`](EXAMPLES.md) | Concrete examples and anti-patterns |
+
+## Skill Layer: Task-Driven Execution
+
+**Execute the assigned task contract. Verify it. Stop.**
+
+Task skills use four principles:
 
 | Principle | Addresses |
 |-----------|-----------|
-| **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
+| **Think Before Acting** | Wrong assumptions, hidden confusion, missing tradeoffs |
 | **Simplicity First** | Overcomplication, bloated abstractions |
-| **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
-| **Goal-Driven Execution** | Leverage through tests-first, verifiable success criteria |
+| **Surgical Changes** | Orthogonal edits, touching code you should not touch |
+| **Task-Driven Execution** | Scope drift, vague outputs, unverified task completion |
 
-## The Four Principles in Detail
+When acting as a skill:
 
-### 1. Think Before Coding
+- Identify the task input, expected output, constraints, and done condition.
+- Do not expand a task into a broader product goal or adjacent cleanup.
+- If the task lacks required information, ask for clarification or report a blocker.
+- Use the smallest verification that proves the task contract is satisfied.
+- Report exactly what changed, what was verified, and any explicit blockers; then stop.
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+## Orchestrator Layer: Goal-Driven Execution
 
-LLMs often pick an interpretation silently and run with it. This principle forces explicit reasoning:
+**Define the outcome, decompose into tasks, dispatch, and verify.**
 
-- **State assumptions explicitly** — If uncertain, ask rather than guess
-- **Present multiple interpretations** — Don't pick silently when ambiguity exists
-- **Push back when warranted** — If a simpler approach exists, say so
-- **Stop when confused** — Name what's unclear and ask for clarification
+Orchestrators own the Karpathy insight:
 
-### 2. Simplicity First
+> "LLMs are exceptionally good at looping until they meet specific goals... Don't tell it what to do, give it success criteria and watch it go."
 
-**Minimum code that solves the problem. Nothing speculative.**
+When acting as an orchestrator:
 
-Combat the tendency toward overengineering:
+- Convert user goals into explicit success criteria and acceptance checks.
+- Break the goal into bounded tasks that skills can execute without scope drift.
+- Track dependencies and sequence work so each task has a clear contract.
+- Verify task outputs and the final goal outcome; do not confuse task completion with goal completion.
+- For non-trivial work, write a brief plan before dispatching tasks.
 
-- No features beyond what was asked
-- No abstractions for single-use code
-- No "flexibility" or "configurability" that wasn't requested
-- No error handling for impossible scenarios
-- If 200 lines could be 50, rewrite it
+## Supervisor Layer: Oversight and Continuous Improvement
 
-**The test:** Would a senior engineer say this is overcomplicated? If yes, simplify.
+**Review independently. Learn from every run. Keep skills lean.**
 
-### 3. Surgical Changes
+The supervisor replaces "watch like a hawk" with a repeatable oversight loop:
 
-**Touch only what you must. Clean up only your own mess.**
+- Prefer a separate AI model or model set from the executor/orchestrator to reduce shared blind spots.
+- Use HITL only when explicitly requested by the user or required by a user-configured policy.
+- Review plans, task decomposition, diffs, test results, final claims, and signs of scope drift.
+- Promote repeated, durable corrections into skill updates.
+- Prune stale, redundant, or low-value guidance so skills stay small and sharp.
+- Version and diff skill changes like code changes.
 
-When editing existing code:
-
-- Don't "improve" adjacent code, comments, or formatting
-- Don't refactor things that aren't broken
-- Match existing style, even if you'd do it differently
-- If you notice unrelated dead code, mention it — don't delete it
-
-When your changes create orphans:
-
-- Remove imports/variables/functions that YOUR changes made unused
-- Don't remove pre-existing dead code unless asked
-
-**The test:** Every changed line should trace directly to the user's request.
-
-### 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform imperative tasks into verifiable goals:
-
-| Instead of... | Transform to... |
-|--------------|-----------------|
-| "Add validation" | "Write tests for invalid inputs, then make them pass" |
-| "Fix the bug" | "Write a test that reproduces it, then make it pass" |
-| "Refactor X" | "Ensure tests pass before and after" |
-
-For multi-step tasks, state a brief plan:
-
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let the LLM loop independently. Weak criteria ("make it work") require constant clarification.
+For humans, the original atrophy warning still applies: occasionally write and review code manually so your discrimination ability does not decay. For AI supervisors, anti-atrophy means self-learning without instruction bloat.
 
 ## Install
 
 **Option A: Claude Code Plugin (recommended)**
 
 From within Claude Code, first add the marketplace:
-```
+
+```text
 /plugin marketplace add forrestchang/andrej-karpathy-skills
 ```
 
 Then install the plugin:
-```
+
+```text
 /plugin install andrej-karpathy-skills@karpathy-skills
 ```
 
-This installs the guidelines as a Claude Code plugin, making the skill available across all your projects.
+This installs the task-driven skill from this repo.
 
 **Option B: CLAUDE.md (per-project)**
 
 New project:
+
 ```bash
 curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
 ```
 
 Existing project (append):
+
 ```bash
 echo "" >> CLAUDE.md
 curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
@@ -127,24 +128,16 @@ curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/
 
 ## Using with Cursor
 
-This repository includes a committed Cursor project rule ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc)) so the same guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to Claude Code.
-
-## Key Insight
-
-From Andrej:
-
-> "LLMs are exceptionally good at looping until they meet specific goals... Don't tell it what to do, give it success criteria and watch it go."
-
-The "Goal-Driven Execution" principle captures this: transform imperative instructions into declarative goals with verification loops.
+This repository includes a committed Cursor project rule ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc)) so the same layer-aware guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to Claude Code.
 
 ## How to Know It's Working
 
 These guidelines are working if you see:
 
-- **Fewer unnecessary changes in diffs** — Only requested changes appear
-- **Fewer rewrites due to overcomplication** — Code is simple the first time
-- **Clarifying questions come before implementation** — Not after mistakes
-- **Clean, minimal PRs** — No drive-by refactoring or "improvements"
+- **Skills produce narrow task outputs** — no drive-by refactoring or invented scope.
+- **Orchestrators reach verified goals** — plans, tasks, and final checks trace back to acceptance criteria.
+- **Supervisors catch drift before merge** — review is independent and evidence-based.
+- **Skills improve without bloating** — recurring lessons are promoted, duplicate or stale rules are pruned.
 
 ## Customization
 

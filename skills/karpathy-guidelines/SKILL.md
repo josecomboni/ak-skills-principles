@@ -1,12 +1,14 @@
 ---
 name: karpathy-guidelines
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: Task-driven behavioral guidelines for LLM coding skills. Use when executing a bounded coding, review, or refactoring task to avoid overcomplication, make surgical changes, surface assumptions, and verify the task contract.
 license: MIT
 ---
 
-# Karpathy Guidelines
+# Karpathy Task Skill Guidelines
 
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
+
+**Layer rule:** Skills are task-driven. A skill receives a bounded task, executes the requested contract, verifies the expected output, and stops. Goal discovery and decomposition belong to orchestrators; oversight and skill improvement belong to supervisors.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
@@ -48,20 +50,21 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
-## 4. Goal-Driven Execution
+## 4. Task-Driven Execution
 
-**Define success criteria. Loop until verified.**
+**Execute the assigned task contract. Verify it. Stop.**
 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+- Identify the task input, expected output, constraints, and done condition.
+- Do not expand a task into a broader product goal or adjacent cleanup.
+- If the task lacks required information, ask for clarification or report a blocker.
+- Use the smallest verification that proves the task contract is satisfied.
+- Report exactly what changed, what was verified, and any explicit blockers; then stop.
 
-For multi-step tasks, state a brief plan:
+For multi-step tasks, state a brief task plan:
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
 3. [Step] → verify: [check]
 ```
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+Strong task contracts let skills run reliably. Vague goals such as "make authentication better" should be routed to an orchestrator or clarified before execution.

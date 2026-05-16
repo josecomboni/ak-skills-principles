@@ -1,6 +1,6 @@
 # Examples
 
-Real-world code examples demonstrating the four principles. Each example shows what LLMs commonly do wrong and how to fix it.
+Real-world examples demonstrating task-driven skills, goal-driven orchestrators, and oversight-driven supervisors. Each example shows what LLMs commonly do wrong and how to fix it.
 
 ---
 
@@ -367,11 +367,69 @@ def save_preferences(db, user_id: int, preferences: dict):
 
 ---
 
-## 4. Goal-Driven Execution
+## 4. Task-Driven Execution
+
+### Example 1: Bounded Task Contract
+
+**Assigned Task:** "In `tests/test_sessions.py`, add a regression test that changing a password invalidates existing sessions. Do not modify production code."
+
+**❌ What LLMs Do (Act Like an Orchestrator)**
+
+```diff
++ def rotate_session_secret(user_id):
++     # new production behavior that was not requested
++     ...
++
++ def invalidate_all_sessions(user_id):
++     # broad auth rewrite
++     ...
+```
+
+**Problems:**
+- Expanded a test-writing task into a production-code task
+- Touched auth behavior without a failing test contract
+- Made review harder because the task boundary disappeared
+
+**✅ What Should Happen (Execute the Task Contract)**
+
+```python
+def test_password_change_invalidates_existing_session(client, user):
+    session_token = client.login(user.email, 'old-password')
+
+    client.change_password(user.id, 'old-password', 'new-password')
+
+    response = client.get('/me', headers={'Authorization': f'Bearer {session_token}'})
+    assert response.status_code == 401
+```
+
+**Report:** Added the requested regression test only. It currently fails because production code does not invalidate sessions on password change. Next task should implement that behavior.
+
+### Example 2: Goal Sent to a Skill
+
+**User Request:** "Fix the authentication system"
+
+**❌ What LLMs Do (Pretend the Goal Is a Task)**
+
+```
+I'll review the auth system, improve session handling, add validation, refactor login,
+and update tests.
+```
+
+**✅ What Should Happen (Reject Vague Scope)**
+
+```
+"Fix the authentication system" is a goal, not a bounded skill task.
+Please provide the specific bug, expected behavior, files in scope, and verification
+command, or route this through an orchestrator to decompose it into tasks.
+```
+
+---
+
+## 5. Orchestrator Goal-Driven Execution
 
 ### Example 1: Vague vs. Verifiable
 
-**User Request:** "Fix the authentication system"
+**User Goal:** "Fix the authentication system"
 
 **❌ What LLMs Do (Vague Approach)**
 
@@ -385,138 +443,126 @@ I'll fix the authentication system by:
 [Proceeds to make changes without clear success criteria]
 ```
 
-**✅ What Should Happen (Verifiable Goals)**
+**✅ What Should Happen (Goal Decomposition)**
 
 ```
-To "fix authentication," I need to define success criteria. 
-What specific issue are we solving?
+To "fix authentication," I need success criteria.
 
 If the issue is "users stay logged in after password change":
 
 Plan:
-1. Write test: Change password → verify old session invalidated
-   Verify: Test fails (reproduces bug)
+1. Task: Write failing regression test for password-change session invalidation
+   Owner: test-writing skill
+   Verify: Test fails for the current bug
 
-2. Implement: Invalidate sessions on password change
-   Verify: Test passes
+2. Task: Implement session invalidation on password change
+   Owner: implementation skill
+   Verify: Regression test passes
 
-3. Check edge cases: Multiple active sessions, concurrent changes
+3. Task: Check edge cases: multiple active sessions and concurrent changes
+   Owner: test-writing skill
    Verify: Additional tests pass
 
-4. Verify no regression: Existing auth tests still pass
-   Verify: Full test suite green
+4. Task: Run existing auth tests
+   Owner: verification skill
+   Verify: Full auth suite green
 
-Current test coverage for auth: [shows coverage]
-What's the specific auth issue you're seeing?
+What specific auth issue are we solving?
 ```
 
 ### Example 2: Multi-Step with Verification
 
-**User Request:** "Add rate limiting to the API"
+**User Goal:** "Add rate limiting to the API"
 
-**❌ What LLMs Do (All at Once)**
-
-```python
-# Implements full rate limiting with Redis, multiple strategies,
-# configuration system, and monitoring in one 300-line commit
-# No clear verification steps
-```
-
-**✅ What Should Happen (Incremental with Verification)**
+**✅ What Should Happen (Incremental Dispatch)**
 
 ```
 Plan for rate limiting:
 
-1. Add basic in-memory rate limiting (single endpoint)
-   Verify: 
-   - Test: 100 requests → first 10 succeed, rest get 429
+1. Task: Add basic in-memory rate limiting to one endpoint
+   Verify:
+   - Test: 100 requests -> first 10 succeed, rest get 429
    - Manual: curl endpoint 11 times, see rate limit error
 
-2. Extract to middleware (apply to all endpoints)
+2. Task: Extract rate limiting to middleware
    Verify:
    - Test: Rate limits apply to /users and /posts
    - Existing endpoint tests still pass
 
-3. Add Redis backend (for multi-server)
+3. Task: Add Redis backend only if multi-server deployment is required
    Verify:
-   - Test: Rate limit persists across app restarts
    - Test: Two app instances share rate limit counter
 
-4. Add configuration (rates per endpoint)
-   Verify:
-   - Test: /search allows 10/min, /users allows 100/min
-   - Config file parsed correctly
-
-Each step is independently verifiable and deployable.
-Start with step 1?
+Each task is independently verifiable and bounded.
 ```
 
-### Example 3: Test-First Verification
+---
 
-**User Request:** "The sorting breaks when there are duplicate scores"
+## 6. Supervisor Oversight and Learning
 
-**❌ What LLMs Do (Fix Without Reproducing)**
+### Example 1: Independent Diff Review
 
-```python
-# Immediately changes sort logic without confirming the bug
-def sort_scores(scores):
-    return sorted(scores, key=lambda x: (-x['score'], x['name']))
+**Executor Claim:** "Implemented the requested empty-email validator fix."
+
+**Diff Contains:**
+
+```diff
+  def validate_user(user_data):
+-     if not user_data.get('email'):
++     email = user_data.get('email', '').strip()
++     if not email:
+          raise ValueError("Email required")
++     if len(user_data.get('username', '')) < 3:
++         raise ValueError("Username too short")
 ```
 
-**✅ What Should Happen (Reproduce First)**
+**✅ Supervisor Finding**
 
-```python
-# 1. First, write a test that reproduces the issue
-def test_sort_with_duplicate_scores():
-    """Test sorting when multiple items have same score."""
-    scores = [
-        {'name': 'Alice', 'score': 100},
-        {'name': 'Bob', 'score': 100},
-        {'name': 'Charlie', 'score': 90},
-    ]
-    
-    result = sort_scores(scores)
-    
-    # The bug: order is non-deterministic for duplicates
-    # Run this test multiple times, it should be consistent
-    assert result[0]['score'] == 100
-    assert result[1]['score'] == 100
-    assert result[2]['score'] == 90
-
-# Verify: Run test 10 times → fails with inconsistent ordering
-
-# 2. Now fix with stable sort
-def sort_scores(scores):
-    """Sort by score descending, then name ascending for ties."""
-    return sorted(scores, key=lambda x: (-x['score'], x['name']))
-
-# Verify: Test passes consistently
 ```
+The email fix is in scope, but the new username length validation is unrelated.
+Request a follow-up patch that removes the username change before approval.
+```
+
+### Example 2: Lean Skill Improvement
+
+**Repeated Observation:** Three runs added unrelated validation while fixing a narrow validator bug.
+
+**❌ Bad Skill Update**
+
+```
+Add two pages of validator-specific instructions covering email, username, phone,
+address, passwords, profile data, and every possible future field.
+```
+
+**✅ Good Skill Update**
+
+```
+When fixing a validator bug, change only the validation path needed to reproduce
+and fix the reported failure. Do not add validation for unrelated fields.
+```
+
+This update is short, durable, and broadly useful.
 
 ---
 
 ## Anti-Patterns Summary
 
-| Principle | Anti-Pattern | Fix |
-|-----------|-------------|-----|
-| Think Before Coding | Silently assumes file format, fields, scope | List assumptions explicitly, ask for clarification |
-| Simplicity First | Strategy pattern for single discount calculation | One function until complexity is actually needed |
-| Surgical Changes | Reformats quotes, adds type hints while fixing bug | Only change lines that fix the reported issue |
-| Goal-Driven | "I'll review and improve the code" | "Write test for bug X → make it pass → verify no regressions" |
+| Layer | Anti-Pattern | Fix |
+|-------|--------------|-----|
+| Skill | Silently assumes file format, fields, or scope | List assumptions explicitly; ask or report a blocker |
+| Skill | Strategy pattern for a single discount calculation | Use one function until complexity is actually needed |
+| Skill | Reformats quotes and adds type hints while fixing a bug | Only change lines that fix the reported issue |
+| Skill | Treats "fix authentication" as a bounded task | Ask for a task contract or route to an orchestrator |
+| Orchestrator | Dispatches "improve auth" directly to a skill | Define success criteria, decompose into bounded tasks, verify each one |
+| Supervisor | Accepts executor claims without checking the diff | Review plan, diff, tests, and final claims independently |
+| Supervisor | Adds every lesson to the skill forever | Promote repeated durable lessons; prune stale or duplicate rules |
 
 ## Key Insight
 
-The "overcomplicated" examples aren't obviously wrong—they follow design patterns and best practices. The problem is **timing**: they add complexity before it's needed, which:
+The "overcomplicated" examples aren't obviously wrong—they follow design patterns and best practices. The problem is **timing and layer confusion**:
 
-- Makes code harder to understand
-- Introduces more bugs
-- Takes longer to implement
-- Harder to test
+- Skills should solve today's assigned task simply.
+- Orchestrators should manage goals, dependencies, and verification loops.
+- Supervisors should catch drift and improve future runs without bloating the skill.
 
-The "simple" versions are:
-- Easier to understand
-- Faster to implement
-- Easier to test
-- Can be refactored later when complexity is actually needed
-
-**Good code is code that solves today's problem simply, not tomorrow's problem prematurely.**
+**Good agentic coding keeps the right responsibility in the right layer.**
