@@ -100,7 +100,7 @@ For humans, the original atrophy warning still applies: occasionally write and r
 From within Claude Code, first add the marketplace:
 
 ```text
-/plugin marketplace add forrestchang/andrej-karpathy-skills
+/plugin marketplace add josecomboni/andrej-karpathy-skills
 ```
 
 Then install the plugin:
@@ -116,14 +116,14 @@ This installs the task-driven skill from this repo.
 New project:
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md
 ```
 
 Existing project (append):
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ## Using with Cursor

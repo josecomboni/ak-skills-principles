@@ -100,7 +100,7 @@
 在 Claude Code 中，首先添加插件市场：
 
 ```text
-/plugin marketplace add forrestchang/andrej-karpathy-skills
+/plugin marketplace add josecomboni/andrej-karpathy-skills
 ```
 
 然后安装插件：
@@ -116,14 +116,14 @@
 新项目：
 
 ```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
+curl -o CLAUDE.md https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md
 ```
 
 已有项目（追加）：
 
 ```bash
 echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+curl https://raw.githubusercontent.com/josecomboni/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
 ```
 
 ## 在 Cursor 中使用
